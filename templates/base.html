@@ -20,12 +20,26 @@
 			<p>Temperature: <span>TEMP</span></p>
 			<p>Humidity: <span>HUMD</span></p>
 		</div>
-		<div>
-			<ul>
-			{% for datum in data%}
-				<li>{{datum[1]}}F {{datum[2]}}C</li>
-			{% endfor %}
-			</ul>
-		</div>
+		<table>
+			<thead>
+				<tr>
+					<th>Temperature</th>
+					<th>Humidity</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for datum in data %}
+				<tr>
+
+					<td>
+						{{datum[1]}}
+					</td>
+					<td>
+						{{datum[2]}}
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
 	</body>
 </html>
