@@ -22,6 +22,8 @@ def close_connection(exception):
 @app.route("/")
 def web_app():
     cur = get_db().cursor()
-    res = cur.execute("SELECT * from dhtreadings")
-        
-    return render_template("base.html", data=res.fetchall())
+
+    history = cur.execute("SELECT currentdate, temperature, humidity FROM dhtreadings").fetchall()
+    latest = cur.execute("SELECT temperature, humidity FROM dhtreadings ORDER BY id DESC LIMIT 1").fetchone()
+
+    return render_template("base.html", history=history, latest=latest)
