@@ -23,5 +23,5 @@ def close_connection(exception):
 def web_app():
     cur = get_db().cursor()
     res = cur.execute("SELECT * from dhtreadings")
-    print(res.fetchone())
-    return render_template("base.html")
+        
+    return render_template("base.html", data=res.fetchall())
