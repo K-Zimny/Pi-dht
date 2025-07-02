@@ -27,8 +27,10 @@
 	<body>
 		<h1>CrawlSpace Temp/Humidity Readings</h1>
 		<div>
-			<p>Temperature: <span>{{ latest[0] }}F</span></p>
-			<p>Humidity: <span>{{ latest[1] }}C</span></p>
+			{% set temp = latest[0] %}
+			{% set hum = latest[1] %}
+			<p>Temperature: <span>{{ temp }} F</span></p>
+			<p>Humidity: <span>{{ hum }} %</span></p>
 		</div>
 		<table>
 			<thead>
@@ -39,16 +41,16 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for event in history %}
+				{% for date, temp, hum in history %}
 				<tr>
 					<th>
-						{{event[0]}}
+						{{ date }}
 					</th>
 					<td>
-						{{event[1]}}
+						{{ temp }}
 					</td>
 					<td>
-						{{event[2]}}
+						{{ hum }}
 					</td>
 				</tr>
 				{% endfor %}
