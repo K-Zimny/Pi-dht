@@ -26,4 +26,4 @@ def web_app():
     history = cur.execute("SELECT currentdate, temperature, humidity FROM dhtreadings").fetchall()
     latest = cur.execute("SELECT temperature, humidity FROM dhtreadings ORDER BY id DESC LIMIT 1").fetchone()
 
-    return render_template("base.html", history=history, latest=latest)
+    return render_template("index.html", history=history, latest=latest)
