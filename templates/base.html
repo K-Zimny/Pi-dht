@@ -12,13 +12,23 @@
 			h1 {
 				margin-bottom: 1rem;
 			}
+			table {
+				border: 2px solid #ffffff;
+			}
+			th,
+			td {
+				font-weight: normal;
+				padding-inline: 1rem;
+				border: 1px solid #313131;
+				text-align: center;
+			}
 		</style>
 	</head>
 	<body>
 		<h1>CrawlSpace Temp/Humidity Readings</h1>
 		<div>
-			<p>Temperature: <span>{{ latest[0] }}</span></p>
-			<p>Humidity: <span>{{ latest[1] }}</span></p>
+			<p>Temperature: <span>{{ latest[0] }}F</span></p>
+			<p>Humidity: <span>{{ latest[1] }}C</span></p>
 		</div>
 		<table>
 			<thead>
