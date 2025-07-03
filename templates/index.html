@@ -9,10 +9,8 @@
 	<body>
 		<h1>Crawlspace Temperature & Humidity Readings</h1>
 		<div>
-			{% set temp = latest[0] %}
-			{% set hum = latest[1] %}
-			<p>Temperature: <span>{{ temp }} F</span></p>
-			<p>Humidity: <span>{{ hum }} %</span></p>
+			<p>Temperature: <span>{{ latest.temperature }} F</span></p>
+			<p>Humidity: <span>{{ latest.humidity }} %</span></p>
 		</div>
 		<table>
 			<thead>
