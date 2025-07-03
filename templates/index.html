@@ -2,27 +2,9 @@
 <html lang="en">
 	<head>
 		<title>Crawlspace Temp/Humidity Readings</title>
-
-		<style>
-			body {
-				background: #1f1f1f;
-				color: #fff;
-				padding: 1rem;
-			}
-			h1 {
-				margin-bottom: 1rem;
-			}
-			table {
-				border: 2px solid #ffffff;
-			}
-			th,
-			td {
-				font-weight: normal;
-				padding-inline: 1rem;
-				border: 1px solid #313131;
-				text-align: center;
-			}
-		</style>
+		<meta charset="UTF-8"></meta>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+		<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></link>
 	</head>
 	<body>
 		<h1>Crawlspace Temperature & Humidity Readings</h1>
