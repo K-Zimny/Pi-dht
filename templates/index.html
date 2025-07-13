@@ -8,10 +8,19 @@
 	</head>
 	<body>
 		<h1>Crawlspace Temperature & Humidity Readings</h1>
+
 		<div>
 			<p>Temperature: <span>{{ latest.temperature }} F</span></p>
 			<p>Humidity: <span>{{ latest.humidity }} %</span></p>
 		</div>
+
+		<form id="search-form" method="GET" action="/">
+			<label for="date">Search Databse</label>
+			<input id="date" type="date" name="date" />
+			<button type="submit">Search</button>
+			<button id="clear-form" type="button">Clear</button>
+		</form>
+
 		<table>
 			<thead>
 				<tr>
@@ -36,5 +45,15 @@
 				{% endfor %}
 			</tbody>
 		</table>
+
+		<script>
+			document.getElementById("clear-button").addEventListener("click", clearSearch())
+
+			function clearSearch(){
+				const form = document.getElementById("search-form")
+				form.date.value = ""
+				form.submit()
+			}
+		</script>
 	</body>
 </html>

@@ -1,7 +1,6 @@
 import sqlite3
-from flask import Flask
-from flask import g
-from flask import render_template
+from flask import Flask, g, render_template, request
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -24,9 +23,23 @@ def close_connection(exception):
 def web_app():
     cur = get_db().cursor()
 
-    history = cur.execute("SELECT currentdate, temperature, humidity FROM dhtreadings ORDER BY id DESC").fetchall()
+    raw_date = request.args.get("date")
+    if raw_date:
+        try:
+            parse_date = datetime.strptime(raw_date, "%Y-%m-%d")
+            formatted_date = datetime.strftime(parse_date, "%m/%d/%y")
+        except ValueError:
+            formatted_date = None
+
+    if raw_date:
+        history = cur.execute("SELECT currentdate, temperature, humidity FROM dhtreadings WHERE currentdate = ? ORDER BY id DESC",(formatted_date,)).fetchall()
+    else:
+        history = cur.execute("SELECT currentdate, temperature, humidity FROM dhtreadings ORDER BY id DESC").fetchall()
+
+
     if history is None:
         history = {"currentdata": "N/A", "temperature": "N/A", "humidity": "N/A"}
+
 
     latest = cur.execute("SELECT temperature, humidity FROM dhtreadings ORDER BY id DESC LIMIT 1").fetchone()
     if latest is None:
