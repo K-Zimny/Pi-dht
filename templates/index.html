@@ -18,7 +18,7 @@
 			<label for="date">Search Databse</label>
 			<input id="date" type="date" name="date" />
 			<button type="submit">Search</button>
-			<button id="clear-form" type="button">Clear</button>
+			<button id="clear-button">Clear</button>
 		</form>
 
 		<table>
@@ -47,7 +47,7 @@
 		</table>
 
 		<script>
-			document.getElementById("clear-button").addEventListener("click", clearSearch())
+			document.getElementById("clear-button").addEventListener("click", clearSearch)
 
 			function clearSearch(){
 				const form = document.getElementById("search-form")
