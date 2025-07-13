@@ -32,16 +32,37 @@ def web_app():
             formatted_date = None
 
     if raw_date:
-        history = cur.execute("SELECT currentdate, temperature, humidity FROM dhtreadings WHERE currentdate = ? ORDER BY id DESC",(formatted_date,)).fetchall()
+        search_query = """
+            SELECT currentdate, temperature, humidity
+            FROM dhtreadings
+            WHERE currentdate = ?
+            ORDER BY id
+            DESC
+        """
+        history = cur.execute(search_query,(formatted_date,)).fetchall()
     else:
-        history = cur.execute("SELECT currentdate, temperature, humidity FROM dhtreadings ORDER BY id DESC").fetchall()
+        all_query = """
+            SELECT currentdate, temperature, humidity
+            FROM dhtreadings
+            ORDER BY id
+            DESC
+        """
+        history = cur.execute(all_query).fetchall()
 
 
     if history is None:
         history = {"currentdata": "N/A", "temperature": "N/A", "humidity": "N/A"}
 
+    latest_query = """
+        SELECT temperature, humidity
+        FROM dhtreadings
+        ORDER BY id
+        DESC
+        LIMIT 1
+    """
 
-    latest = cur.execute("SELECT temperature, humidity FROM dhtreadings ORDER BY id DESC LIMIT 1").fetchone()
+    latest = cur.execute(latest_query).fetchone()
+
     if latest is None:
         latest = {"temperature": "N/A", "humidity": "N/A"}
 
