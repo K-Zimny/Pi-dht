@@ -6,6 +6,29 @@ app = Flask(__name__)
 
 DATABASE = "./sensordata.db"
 
+LATEST_QUERY = """
+    SELECT temperature, humidity
+    FROM dhtreadings
+    ORDER BY id
+    DESC
+    LIMIT 1
+"""
+
+ALL_QUERY = """
+    SELECT currentdate, temperature, humidity
+    FROM dhtreadings
+    ORDER BY id
+    DESC
+"""
+
+SEARCH_QUERY = """
+    SELECT currentdate, temperature, humidity
+    FROM dhtreadings
+    WHERE currentdate = ?
+    ORDER BY id
+    DESC
+"""
+
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
@@ -32,38 +55,32 @@ def web_app():
             formatted_date = None
 
     if raw_date:
-        search_query = """
-            SELECT currentdate, temperature, humidity
-            FROM dhtreadings
-            WHERE currentdate = ?
-            ORDER BY id
-            DESC
-        """
-        history = cur.execute(search_query,(formatted_date,)).fetchall()
+        history = cur.execute(SEARCH_QUERY,(formatted_date,)).fetchall()
     else:
-        all_query = """
-            SELECT currentdate, temperature, humidity
-            FROM dhtreadings
-            ORDER BY id
-            DESC
-        """
-        history = cur.execute(all_query).fetchall()
-
+        history = cur.execute(ALL_QUERY).fetchall()
 
     if history is None:
         history = {"currentdata": "N/A", "temperature": "N/A", "humidity": "N/A"}
 
-    latest_query = """
-        SELECT temperature, humidity
-        FROM dhtreadings
-        ORDER BY id
-        DESC
-        LIMIT 1
-    """
+    chart_labels = [
+            datetime.strptime(row["currentdate"], "%m/%d/%y").strftime("%Y-%m-%d")
+            for row in history
+    ]
+    chart_temperature = [row["temperature"] for row in history]
+    chart_humidity = [row["humidity"] for row in history]
 
-    latest = cur.execute(latest_query).fetchone()
+    chart_temperatures = [row["temperature"] for row in history]
+    chart_humidity = [row["humidity"] for row in history]
 
+    latest = cur.execute(LATEST_QUERY).fetchone()
     if latest is None:
         latest = {"temperature": "N/A", "humidity": "N/A"}
 
-    return render_template("index.html", history=history, latest=latest)
+
+    return render_template("index.html",
+        history=history,
+        latest=latest,
+        chart_labels=chart_labels,
+        chart_temperature=chart_temperature,
+        chart_humidity=chart_humidity
+    )

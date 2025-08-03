@@ -5,6 +5,9 @@
 		<meta charset="UTF-8"></meta>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
 		<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></link>
+		<script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/3.0.1/plotly.min.js" integrity="sha512-GvBV4yZL+5zT68skQaXRW80H+S82WupIppDunAVt6pCLVdFmTv9tstetOqXv76L/z9WFl+0zY28QFKu0LAVFSg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 	</head>
 	<body>
 		<h1>Crawlspace Temperature & Humidity Readings</h1>
@@ -21,6 +24,8 @@
 			<button id="clear-button">Clear</button>
 		</form>
 
+		<div id="chart"></div>
+
 		<table>
 			<thead>
 				<tr>
@@ -36,10 +41,10 @@
 						{{ date }}
 					</th>
 					<td>
-						{{ temp }}
+						{{ temp }} F
 					</td>
 					<td>
-						{{ hum }}
+						{{ hum }} %
 					</td>
 				</tr>
 				{% endfor %}
@@ -47,6 +52,13 @@
 		</table>
 
 		<script>
+			const form = document.getElementById("search-form")
+			const searchParams = new URLSearchParams(document.location.search)
+			const searchDate = searchParams.get("date")
+			form.date.value = searchDate
+
+			//===========================================================================
+
 			document.getElementById("clear-button").addEventListener("click", clearSearch)
 
 			function clearSearch(){
@@ -54,6 +66,25 @@
 				form.date.value = ""
 				form.submit()
 			}
+
+			//===========================================================================
+			var tempTrace = {
+				x: {{ chart_labels | tojson }},
+				y: {{ chart_temperature }},
+				type: 'scatter',
+				name: "Temperature"
+			};
+
+			var humTrace = {
+				x: {{ chart_labels | tojson }},
+				y: {{ chart_humidity }},
+				type: 'scatter',
+				name: "Humidity"
+			};
+
+			var data = [tempTrace, humTrace];
+
+			Plotly.newPlot('chart', data);
 		</script>
 	</body>
 </html>
