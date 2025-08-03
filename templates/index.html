@@ -17,11 +17,11 @@
 			<p>Humidity: <span>{{ latest.humidity }} %</span></p>
 		</div>
 
-		<form id="search-form" method="GET" action="/">
-			<label for="date">Search Databse</label>
+		<form id="search-form" method="GET" action="/" >
+			<label for="date">Search History</label>
 			<input id="date" type="date" name="date" />
-			<button type="submit">Search</button>
-			<button id="clear-button">Clear</button>
+			<!-- <button type="submit">Search</button> -->
+			<button id="clear-button">Clear Search</button>
 		</form>
 
 		<div id="chart"></div>
@@ -55,16 +55,33 @@
 			const form = document.getElementById("search-form")
 			const searchParams = new URLSearchParams(document.location.search)
 			const searchDate = searchParams.get("date")
+
 			form.date.value = searchDate
 
 			//===========================================================================
+			const dateInput = document.getElementById("date")
 
-			document.getElementById("clear-button").addEventListener("click", clearSearch)
+			dateInput.addEventListener("change", submitDate)
 
-			function clearSearch(){
-				const form = document.getElementById("search-form")
-				form.date.value = ""
-				form.submit()
+			function submitDate(){
+				if(dateInput?.value){
+					form.requestSubmit()
+				}
+			}
+
+			//===========================================================================
+			const clearButton = document.getElementById("clear-button")
+
+			if(!searchDate){
+				clearButton.style.display = "none"
+			} else {
+				clearButton.addEventListener("click", clearSearch)
+
+				function clearSearch(){
+					const form = document.getElementById("search-form")
+					form.date.value = ""
+					form.requestSubmit()
+				}
 			}
 
 			//===========================================================================
