@@ -22,14 +22,13 @@ def handle_hum():
 def handle_db():
     temp = handle_temp()
     hum = handle_hum()
-    date = datetime.now().strftime("%m/%d/%y")
-    time = datetime.now().strftime("%H:%M:%S")
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    data = (temp, hum, date, time, 'DHT Office')
+    data = (temp, hum, timestamp, 'DHT Office')
 
     con = sqlite3.connect("sensordata.db")
     cur = con.cursor()
-    cur.execute("INSERT INTO dhtreadings(temperature, humidity, currentdate, currentime, device) Values(?,?,?,?,?)", data)   
+    cur.execute("INSERT INTO test(temperature, humidity, timestamp, device) Values(?,?,?,?)", data)   
     con.commit()
     print("Written to disk")
 

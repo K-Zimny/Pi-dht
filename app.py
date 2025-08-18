@@ -1,3 +1,4 @@
+# app.py
 import sqlite3
 from flask import Flask, g, render_template, request
 from datetime import datetime
@@ -7,30 +8,28 @@ app = Flask(__name__)
 DATABASE = "./sensordata.db"
 
 LATEST_QUERY = """
-    SELECT temperature, humidity
-    FROM dhtreadings
-    ORDER BY id
-    DESC
+    SELECT temperature, humidity, timestamp
+    FROM dhtreadings_test
+    ORDER BY id DESC
     LIMIT 1
 """
 
 ALL_QUERY = """
-    SELECT currentdate, temperature, humidity
-    FROM dhtreadings
-    ORDER BY id
-    DESC
+    SELECT timestamp, temperature, humidity
+    FROM dhtreadings_test
+    ORDER BY id DESC
 """
 
+# Filter by calendar day using SQLite's date() on ISO timestamp
 SEARCH_QUERY = """
-    SELECT currentdate, temperature, humidity
-    FROM dhtreadings
-    WHERE currentdate = ?
-    ORDER BY id
-    DESC
+    SELECT timestamp, temperature, humidity
+    FROM dhtreadings_test
+    WHERE date(timestamp) = ?
+    ORDER BY id DESC
 """
 
 def get_db():
-    db = getattr(g, '_database', None)
+    db = getattr(g, "_database", None)
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
         db.row_factory = sqlite3.Row
@@ -38,7 +37,7 @@ def get_db():
 
 @app.teardown_appcontext
 def close_connection(exception):
-    db = getattr(g, '_database', None)
+    db = getattr(g, "_database", None)
     if db is not None:
         db.close()
 
@@ -47,40 +46,43 @@ def web_app():
     cur = get_db().cursor()
 
     raw_date = request.args.get("date")
+    valid_date = None
     if raw_date:
         try:
-            parse_date = datetime.strptime(raw_date, "%Y-%m-%d")
-            formatted_date = datetime.strftime(parse_date, "%m/%d/%y")
+            # Expecting YYYY-MM-DD from <input type="date">
+            datetime.strptime(raw_date, "%Y-%m-%d")
+            valid_date = raw_date
         except ValueError:
-            formatted_date = None
+            valid_date = None  # fall back to all
 
-    if raw_date:
-        history = cur.execute(SEARCH_QUERY,(formatted_date,)).fetchall()
+    if valid_date:
+        history = cur.execute(SEARCH_QUERY, (valid_date,)).fetchall()
     else:
         history = cur.execute(ALL_QUERY).fetchall()
 
-    if history is None:
-        history = {"currentdata": "N/A", "temperature": "N/A", "humidity": "N/A"}
-
-    chart_labels = [
-            datetime.strptime(row["currentdate"], "%m/%d/%y").strftime("%Y-%m-%d")
-            for row in history
-    ]
-    chart_temperature = [row["temperature"] for row in history]
-    chart_humidity = [row["humidity"] for row in history]
-
-    chart_temperatures = [row["temperature"] for row in history]
-    chart_humidity = [row["humidity"] for row in history]
-
+    # Latest reading
     latest = cur.execute(LATEST_QUERY).fetchone()
+
+    # Build chart arrays.
+    # history is DESC for "latest first" in a table view, but charts usually want ASC:
+    history_for_chart = list(reversed(history))
+
+    chart_labels = [row["timestamp"] for row in history_for_chart]      # ISO strings → Plotly time axis
+    chart_temperature = [row["temperature"] for row in history_for_chart]
+    chart_humidity = [row["humidity"] for row in history_for_chart]
+
+    # Defaults if empty
     if latest is None:
-        latest = {"temperature": "N/A", "humidity": "N/A"}
+        latest = {"temperature": "N/A", "humidity": "N/A", "timestamp": "N/A"}
 
-
-    return render_template("index.html",
-        history=history,
+    return render_template(
+        "index.html",
+        history=history,  # rows include timestamp/temperature/humidity
         latest=latest,
         chart_labels=chart_labels,
         chart_temperature=chart_temperature,
-        chart_humidity=chart_humidity
+        chart_humidity=chart_humidity,
     )
+
+if __name__ == "__main__":
+    app.run(debug=True)
