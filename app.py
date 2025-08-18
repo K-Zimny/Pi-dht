@@ -9,21 +9,21 @@ DATABASE = "./sensordata.db"
 
 LATEST_QUERY = """
     SELECT temperature, humidity, timestamp
-    FROM test
+    FROM dhtreadings_test
     ORDER BY id DESC
     LIMIT 1
 """
 
 ALL_QUERY = """
     SELECT timestamp, temperature, humidity
-    FROM test
+    FROM dhtreadings_test
     ORDER BY id DESC
 """
 
 # Filter by calendar day using SQLite's date() on ISO timestamp
 SEARCH_QUERY = """
     SELECT timestamp, temperature, humidity
-    FROM test
+    FROM dhtreadings_test
     WHERE date(timestamp) = ?
     ORDER BY id DESC
 """

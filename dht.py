@@ -28,7 +28,7 @@ def handle_db():
 
     con = sqlite3.connect("sensordata.db")
     cur = con.cursor()
-    cur.execute("INSERT INTO test(temperature, humidity, timestamp, device) Values(?,?,?,?)", data)   
+    cur.execute("INSERT INTO dhtreadings_test(temperature, humidity, timestamp, device) Values(?,?,?,?)", data)   
     con.commit()
     print("Written to disk")
 
