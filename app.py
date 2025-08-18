@@ -45,8 +45,11 @@ def close_connection(exception):
 def web_app():
     cur = get_db().cursor()
 
+    # === Query ===
+    # Check if a date was submitted and use that for the search, else return all entries. 
     raw_date = request.args.get("date")
     valid_date = None
+
     if raw_date:
         try:
             # Expecting YYYY-MM-DD from <input type="date">
@@ -56,24 +59,24 @@ def web_app():
             valid_date = None  # fall back to all
 
     if valid_date:
-        history = cur.execute(SEARCH_QUERY, (valid_date,)).fetchall()
+        history = cur.execute(SEARCH_QUERY, (valid_date,)).fetchall()  # search by date
     else:
-        history = cur.execute(ALL_QUERY).fetchall()
+        history = cur.execute(ALL_QUERY).fetchall() # show all
+    # === end Query ===
 
-    # Latest reading
+    # === Latest Reading ===
     latest = cur.execute(LATEST_QUERY).fetchone()
+    if latest is None:
+        latest = {"temperature": "N/A", "humidity": "N/A", "timestamp": "N/A"}
+    # === end Latest Reading ===
 
-    # Build chart arrays.
-    # history is DESC for "latest first" in a table view, but charts usually want ASC:
+    # === Chart Data ===
     history_for_chart = list(reversed(history))
 
     chart_labels = [row["timestamp"] for row in history_for_chart]      # ISO strings → Plotly time axis
     chart_temperature = [row["temperature"] for row in history_for_chart]
     chart_humidity = [row["humidity"] for row in history_for_chart]
-
-    # Defaults if empty
-    if latest is None:
-        latest = {"temperature": "N/A", "humidity": "N/A", "timestamp": "N/A"}
+    # === end Chart Data ===
 
     return render_template(
         "index.html",
