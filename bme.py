@@ -1,20 +1,21 @@
 import board
-import adafruit_dht
+from adafruit_bme280 import basic as adafruit_bme280
 import sqlite3
 from datetime import datetime
 
-dht_device = adafruit_dht.DHT22(board.D17)
+i2c = board.I2C()
+bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c)
 DATABASE = "sensordata.db"
 
 def handle_temp():
-    temp = round((dht_device.temperature * (9/5)) + 32, 1)
+    temp = round((bme280.temperature * (9/5)) + 32, 1)
     print("Temperature: " + str(temp) + " F")
     
     return temp
 
 
 def handle_hum():
-    hum = round(dht_device.humidity, 1) 
+    hum = round(bme280.humidity, 1) 
     print("Humidity: " + str(hum) + " %")
 
     return hum
