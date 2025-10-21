@@ -30,7 +30,7 @@ def handle_db():
 
     con = sqlite3.connect(DATABASE)
     cur = con.cursor()
-    cur.execute("INSERT INTO dhtreadings_test(temperature, humidity, timestamp, device) Values(?,?,?,?)", data)   
+    cur.execute("INSERT INTO bme_readings(temperature, humidity, timestamp, device) Values(?,?,?,?)", data)   
     con.commit()
     print("Written to disk")
 
