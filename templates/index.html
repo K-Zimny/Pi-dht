@@ -89,14 +89,20 @@
 				x: {{ chart_labels | tojson }},
 				y: {{ chart_temperature }},
 				type: 'scatter',
-				name: "Temperature"
+				name: "Temperature",
+				line: {
+					color: "red",
+				}
 			};
 
 			var humTrace = {
 				x: {{ chart_labels | tojson }},
 				y: {{ chart_humidity }},
 				type: 'scatter',
-				name: "Humidity"
+				name: "Humidity",
+				line: {
+					color: "blue"
+				}
 			};
 
 			var data = [tempTrace, humTrace];

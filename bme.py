@@ -5,7 +5,7 @@ from datetime import datetime
 
 i2c = board.I2C()
 bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c)
-DATABASE = "sensordata.db"
+DATABASE = "/home/kz/bme/sensordata.db"
 
 def handle_temp():
     temp = round((bme280.temperature * (9/5)) + 32, 1)
