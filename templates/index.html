@@ -5,14 +5,13 @@
 		<meta charset="UTF-8"></meta>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
 		<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></link>
-		<script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/3.0.1/plotly.min.js" integrity="sha512-GvBV4yZL+5zT68skQaXRW80H+S82WupIppDunAVt6pCLVdFmTv9tstetOqXv76L/z9WFl+0zY28QFKu0LAVFSg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
 	</head>
 	<body>
 		<h1>Crawlspace Temperature & Humidity Readings</h1>
 
 		<div>
+			<p>Timestamp: <span>{{ latest.timestamp }}</span></p>
 			<p>Temperature: <span>{{ latest.temperature }} F</span></p>
 			<p>Humidity: <span>{{ latest.humidity }} %</span></p>
 		</div>
@@ -26,7 +25,8 @@
 
 		<div id="chart"></div>
 
-		<table>
+		<button id="show-data-table">Show data table</button>
+		<table id="data-table" class="hidden">
 			<thead>
 				<tr>
 					<th>Date</th>
@@ -85,6 +85,21 @@
 			}
 
 			//===========================================================================
+			const showDataTableButton = document.getElementById("show-data-table")
+			const dataTable = document.getElementById("data-table")
+
+			showDataTableButton.addEventListener("click", showDataTable)
+
+			function showDataTable(){
+				if(dataTable.classList.contains("hidden")) {
+					dataTable.classList.remove("hidden")
+					showDataTableButton.innerText = "Hide data table"
+				} else {
+					dataTable.classList.add("hidden")
+					showDataTableButton.innerText = "Show data table"
+				}
+			}
+			//==========================================================================
 			var tempTrace = {
 				x: {{ chart_labels | tojson }},
 				y: {{ chart_temperature }},

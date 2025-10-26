@@ -1,4 +1,7 @@
-body {
+body,
+button {
+	font-family: monospace;
+	font-size: 18px;
 	background: #fff;
 	color: #000;
 	padding: 1rem;
@@ -15,4 +18,10 @@ td {
 	padding-inline: 1rem;
 	border: 1px solid #313131;
 	text-align: center;
+}
+#chart {
+	height: 75dvh;
+}
+.hidden {
+	display: none;
 }
