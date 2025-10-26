@@ -1,14 +1,16 @@
-# app.py
 import sqlite3
-from flask import Flask, g, render_template, request
 from datetime import datetime
+from flask import Flask, g, render_template, request
 
+# === Flask App Initialization ===
 app = Flask(__name__)
 
+# === Database Configuration ===
 DATABASE = "./sensordata.db"
 
+# === SQL Queries ===
 LATEST_QUERY = """
-    SELECT temperature, humidity, timestamp
+    SELECT timestamp,temperature, humidity
     FROM bme_readings
     ORDER BY id DESC
     LIMIT 1
@@ -20,7 +22,6 @@ ALL_QUERY = """
     ORDER BY id DESC
 """
 
-# Filter by calendar day using SQLite's date() on ISO timestamp
 SEARCH_QUERY = """
     SELECT timestamp, temperature, humidity
     FROM bme_readings
@@ -28,7 +29,9 @@ SEARCH_QUERY = """
     ORDER BY id DESC
 """
 
+# === Database Connection Management ===
 def get_db():
+    """Get or create database connection for the current request."""
     db = getattr(g, "_database", None)
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
@@ -37,50 +40,49 @@ def get_db():
 
 @app.teardown_appcontext
 def close_connection(exception):
+    """Close database connection at the end of each request."""
     db = getattr(g, "_database", None)
     if db is not None:
         db.close()
 
+# === Routes ===
 @app.route("/")
 def web_app():
-    cur = get_db().cursor()
+    """Main route: Display sensor readings with optional date filtering."""
+    cursor = get_db().cursor()
 
-    # === Query ===
-    # Check if a date was submitted and use that for the search, else return all entries. 
+    # Process date filter from query parameters
     raw_date = request.args.get("date")
     valid_date = None
 
     if raw_date:
         try:
-            # Expecting YYYY-MM-DD from <input type="date">
+            # Validate YYYY-MM-DD format from <input type="date">
             datetime.strptime(raw_date, "%Y-%m-%d")
             valid_date = raw_date
         except ValueError:
-            valid_date = None  # fall back to all
+            valid_date = None  # Fall back to showing all records
 
+    # Fetch history data
     if valid_date:
-        history = cur.execute(SEARCH_QUERY, (valid_date,)).fetchall()  # search by date
+        history = cursor.execute(SEARCH_QUERY, (valid_date,)).fetchall()
     else:
-        history = cur.execute(ALL_QUERY).fetchall() # show all
-    # === end Query ===
+        history = cursor.execute(ALL_QUERY).fetchall()
 
-    # === Latest Reading ===
-    latest = cur.execute(LATEST_QUERY).fetchone()
+    # Fetch latest reading
+    latest = cursor.execute(LATEST_QUERY).fetchone()
     if latest is None:
         latest = {"temperature": "N/A", "humidity": "N/A", "timestamp": "N/A"}
-    # === end Latest Reading ===
 
-    # === Chart Data ===
+    # Prepare chart data (reverse for chronological order)
     history_for_chart = list(reversed(history))
-
-    chart_labels = [row["timestamp"] for row in history_for_chart]      # ISO strings → Plotly time axis
+    chart_labels = [row["timestamp"] for row in history_for_chart]
     chart_temperature = [row["temperature"] for row in history_for_chart]
     chart_humidity = [row["humidity"] for row in history_for_chart]
-    # === end Chart Data ===
 
     return render_template(
         "index.html",
-        history=history,  # rows include timestamp/temperature/humidity
+        history=history,
         latest=latest,
         chart_labels=chart_labels,
         chart_temperature=chart_temperature,

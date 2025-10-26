@@ -1,128 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<title>Crawlspace Temp/Humidity Readings</title>
-		<meta charset="UTF-8"></meta>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
-		<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></link>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/3.0.1/plotly.min.js" integrity="sha512-GvBV4yZL+5zT68skQaXRW80H+S82WupIppDunAVt6pCLVdFmTv9tstetOqXv76L/z9WFl+0zY28QFKu0LAVFSg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-	</head>
-	<body>
-		<h1>Crawlspace Temperature & Humidity Readings</h1>
+  <head>
+    <title>Crawlspace Temp/Humidity Readings</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/3.0.1/plotly.min.js"
+      integrity="sha512-GvBV4yZL+5zT68skQaXRW80H+S82WupIppDunAVt6pCLVdFmTv9tstetOqXv76L/z9WFl+0zY28QFKu0LAVFSg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+  </head>
+  <body>
+    <h1>Crawlspace Temperature & Humidity Readings</h1>
 
-		<div>
-			<p>Timestamp: <span>{{ latest.timestamp }}</span></p>
-			<p>Temperature: <span>{{ latest.temperature }} F</span></p>
-			<p>Humidity: <span>{{ latest.humidity }} %</span></p>
-		</div>
+    <section>
+      <h2>Latest Reading</h2>
+      <p>Timestamp: <span>{{ latest.timestamp }}</span></p>
+      <p>Temperature: <span>{{ latest.temperature }} F</span></p>
+      <p>Humidity: <span>{{ latest.humidity }} %</span></p>
+    </section>
 
-		<form id="search-form" method="GET" action="/" >
-			<label for="date">Search History</label>
-			<input id="date" type="date" name="date" />
-			<!-- <button type="submit">Search</button> -->
-			<button id="clear-button">Clear Search</button>
-		</form>
+    <section>
+      <h2>Search History</h2>
+      <form id="search-form" method="GET" action="/">
+        <label for="date">Filter by Date</label>
+        <input id="date" type="date" name="date" />
+        <button id="clear-button">Clear Search</button>
+      </form>
+    </section>
 
-		<div id="chart"></div>
+    <section>
+      <h2>Chart</h2>
+      <div id="chart"></div>
+    </section>
 
-		<button id="show-data-table">Show data table</button>
-		<table id="data-table" class="hidden">
-			<thead>
-				<tr>
-					<th>Date</th>
-					<th>Temperature</th>
-					<th>Humidity</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for date, temp, hum in history %}
-				<tr>
-					<th>
-						{{ date }}
-					</th>
-					<td>
-						{{ temp }} F
-					</td>
-					<td>
-						{{ hum }} %
-					</td>
-				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
+    <section>
+      <button id="show-data-table">Show data table</button>
+      <table id="data-table" class="hidden">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Temperature</th>
+            <th>Humidity</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for date, temp, hum in history %}
+          <tr>
+            <th>{{ date }}</th>
+            <td>{{ temp }} F</td>
+            <td>{{ hum }} %</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
 
-		<script>
-			const form = document.getElementById("search-form")
-			const searchParams = new URLSearchParams(document.location.search)
-			const searchDate = searchParams.get("date")
+    <script>
+      // Initialize form with date from URL
+      const form = document.getElementById("search-form");
+      const searchParams = new URLSearchParams(document.location.search);
+      const searchDate = searchParams.get("date");
+      form.date.value = searchDate;
 
-			form.date.value = searchDate
+      // Date input change handler
+      const dateInput = document.getElementById("date");
+      dateInput.addEventListener("change", submitDate);
 
-			//===========================================================================
-			const dateInput = document.getElementById("date")
+      function submitDate() {
+      	if (dateInput?.value) {
+      		form.requestSubmit();
+      	}
+      }
 
-			dateInput.addEventListener("change", submitDate)
+      // Clear search button
+      const clearButton = document.getElementById("clear-button");
+      if (!searchDate) {
+      	clearButton.style.display = "none";
+      } else {
+      	clearButton.addEventListener("click", clearSearch);
+      }
 
-			function submitDate(){
-				if(dateInput?.value){
-					form.requestSubmit()
-				}
-			}
+      function clearSearch() {
+      	form.date.value = "";
+      	form.requestSubmit();
+      }
 
-			//===========================================================================
-			const clearButton = document.getElementById("clear-button")
+      // Data table toggle
+      const showDataTableButton = document.getElementById("show-data-table");
+      const dataTable = document.getElementById("data-table");
+      showDataTableButton.addEventListener("click", showDataTable);
 
-			if(!searchDate){
-				clearButton.style.display = "none"
-			} else {
-				clearButton.addEventListener("click", clearSearch)
+      function showDataTable() {
+      	if (dataTable.classList.contains("hidden")) {
+      		dataTable.classList.remove("hidden");
+      		showDataTableButton.innerText = "Hide data table";
+      	} else {
+      		dataTable.classList.add("hidden");
+      		showDataTableButton.innerText = "Show data table";
+      	}
+      }
 
-				function clearSearch(){
-					const form = document.getElementById("search-form")
-					form.date.value = ""
-					form.requestSubmit()
-				}
-			}
+      // Plotly chart configuration
+      const tempTrace = {
+      	x: {{ chart_labels | tojson }},
+      	y: {{ chart_temperature }},
+      	type: 'scatter',
+      	name: "Temperature",
+      	line: { color: "red" }
+      };
 
-			//===========================================================================
-			const showDataTableButton = document.getElementById("show-data-table")
-			const dataTable = document.getElementById("data-table")
+      const humTrace = {
+      	x: {{ chart_labels | tojson }},
+      	y: {{ chart_humidity }},
+      	type: 'scatter',
+      	name: "Humidity",
+      	line: { color: "blue" }
+      };
 
-			showDataTableButton.addEventListener("click", showDataTable)
-
-			function showDataTable(){
-				if(dataTable.classList.contains("hidden")) {
-					dataTable.classList.remove("hidden")
-					showDataTableButton.innerText = "Hide data table"
-				} else {
-					dataTable.classList.add("hidden")
-					showDataTableButton.innerText = "Show data table"
-				}
-			}
-			//==========================================================================
-			var tempTrace = {
-				x: {{ chart_labels | tojson }},
-				y: {{ chart_temperature }},
-				type: 'scatter',
-				name: "Temperature",
-				line: {
-					color: "red",
-				}
-			};
-
-			var humTrace = {
-				x: {{ chart_labels | tojson }},
-				y: {{ chart_humidity }},
-				type: 'scatter',
-				name: "Humidity",
-				line: {
-					color: "blue"
-				}
-			};
-
-			var data = [tempTrace, humTrace];
-
-			Plotly.newPlot('chart', data);
-		</script>
-	</body>
+      Plotly.newPlot('chart', [tempTrace, humTrace]);
+    </script>
+  </body>
 </html>
