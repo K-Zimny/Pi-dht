@@ -1,54 +1,141 @@
-/* Global Styles */
+/* === Global Styles === */
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: monospace;
-  font-size: 18px;
-  background: #fff;
-  color: #000;
-  padding: 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #f8f9fa;
 }
 
 h1 {
-  margin-bottom: 1rem;
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0 0 2rem 0;
+  color: #2c3e50;
 }
 
 h2 {
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
-  font-size: 1.2em;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  color: #34495e;
 }
 
 section {
-  margin-bottom: 2rem;
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* Interactive Elements */
+/* === Latest Reading Display === */
+section p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+section span {
+  font-weight: 500;
+  color: #2980b9;
+}
+
+/* === Form Styles === */
+form {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #555;
+}
+
+input[type="date"] {
+  padding: 0.6rem;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+input[type="date"]:focus {
+  outline: none;
+  border-color: #2980b9;
+}
+
+/* === Button Styles === */
 button {
-  font-family: monospace;
-  font-size: 18px;
-  padding: 1rem;
-  background: #fff;
-  color: #000;
+  padding: 0.6rem 1.2rem;
+  border: 2px solid #2980b9;
+  border-radius: 4px;
+  background: #2980b9;
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
 }
 
-/* Chart Container */
+button:hover {
+  background: #3498db;
+  border-color: #3498db;
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+/* === Chart Container === */
 #chart {
-  height: 75dvh;
+  height: 400px;
+  width: 100%;
+  background: white;
+  border-radius: 4px;
 }
 
-/* Table Styles */
+/* === Table Styles === */
 table {
-  border: 2px solid #000;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
 }
 
-th,
+thead {
+  background: #f8f9fa;
+}
+
+th {
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #ddd;
+  color: #555;
+}
+
 td {
-  font-weight: normal;
-  padding-inline: 1rem;
-  border: 1px solid #313131;
-  text-align: center;
+  padding: 0.75rem;
+  border-bottom: 1px solid #eee;
 }
 
-/* Utility Classes */
+tbody tr:hover {
+  background: #f8f9fa;
+}
+
+/* === Utility Classes === */
 .hidden {
   display: none;
 }
