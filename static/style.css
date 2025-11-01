@@ -10,7 +10,7 @@ body {
   color: #333;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   background: #f8f9fa;
 }
 
@@ -31,8 +31,8 @@ h2 {
 section {
   background: white;
   border-radius: 8px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -101,7 +101,7 @@ button:active {
 
 /* === Chart Container === */
 #chart {
-  height: 400px;
+  height: 800px;
   width: 100%;
   background: white;
   border-radius: 4px;
@@ -120,15 +120,20 @@ thead {
 
 th {
   padding: 0.75rem;
-  text-align: left;
+  text-align: right;
   font-weight: 600;
   border-bottom: 2px solid #ddd;
   color: #555;
+
+  &:first-child {
+    text-align: left;
+  }
 }
 
 td {
   padding: 0.75rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 2px solid #ddd;
+  text-align: right;
 }
 
 tbody tr:hover {
