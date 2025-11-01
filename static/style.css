@@ -44,6 +44,15 @@ section p {
 section span {
   font-weight: 500;
   color: #2980b9;
+	&.time-stamp {
+		color: #333;
+	}
+	&.temperature {
+		color: red;
+	}
+	&.humidity {
+		color: blue;
+	}
 }
 
 /* === Form Styles === */
